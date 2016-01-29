@@ -9,6 +9,12 @@ local query = {
   match_all = {}
 }
 
+local tweet = Tweets:find(1)
+assert.are.equal(tweet.user, "kimchy")
+
+local tweets = Tweets:select(query)
+assert.are.equal(table.getn(tweets), 3)
+
 assert.are.equal(Tweets:count(), 3)
 
 local paginated = Tweets:paginated(query)
