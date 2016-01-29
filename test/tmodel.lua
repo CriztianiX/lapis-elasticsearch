@@ -25,3 +25,5 @@ assert.are.equal(paginated:num_pages(), 2)
 local page = paginated:get_page(2)
 assert.are.equal(page[1].user, "John")
 
+-- Delete a document
+assert.is.True(Tweets:delete(1))

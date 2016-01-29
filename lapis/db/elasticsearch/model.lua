@@ -78,6 +78,15 @@ do
     end
     return res
   end
+  self.delete = function(self, primary_key)
+    local data, res = self.db.client:delete(self:get_params({
+      id = primary_key
+    }))
+    if res == 200 then
+      return true
+    end
+    return res
+  end
   self.find = function(self, primary_key)
     local data, res = self.db.client:get(self:get_params({
       id = primary_key

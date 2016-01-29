@@ -11,6 +11,11 @@ class Model extends BaseModel
         if res == 200
             return data.count
         return res
+    @delete: (primary_key) =>
+        data, res = @db.client\delete @get_params({ id: primary_key })
+        if res == 200
+            return true
+        return res        
     @find: (primary_key) =>
         data, res = @db.client\get @get_params({ id: primary_key })
         if res == 200 and data.found == true
