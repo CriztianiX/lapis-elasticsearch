@@ -33,4 +33,10 @@ paginated:total_items()
 paginated:num_pages()
 paginated:get_page(2)
 ```
-
+### Model:delete(id)
+```lua
+local res = Tweets:delete(1)
+```
+```
+res will be true on success delete
+```
