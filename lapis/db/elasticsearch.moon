@@ -8,8 +8,8 @@ client = elasticsearch.client {
     hosts: {
         {
             protocol: config.elasticsearch.protocol or "http"
-            host: config.elasticsearch.host or "localhost"
-            port: config.elasticsearch.port or 9200
+            host: config.elasticsearch.host or "127.0.0.1"
+            port: config.elasticsearch.port or 9200,
         }
     }
 }
