@@ -14,6 +14,14 @@ local Tweets = Model:extend("tweet", {
 The first argument to extend is the name of the type to associate the model to. 
 ```
 
+### Model:count(query) - Counts the number of records in the table that match the clause.
+```lua
+local tweet = Tweets:count()
+local tweet = Tweets:count({
+  match_all = {}
+})
+```
+
 ### Model:find(id)
 ```lua
 local tweet = Tweets:find(1)
@@ -33,15 +41,42 @@ local query = {
   match_all = {}
 }
 local tweet = Tweets:select(query)
-local paginated = Tweets:paginated(query)
-paginated:total_items()
-paginated:num_pages()
-paginated:get_page(2)
 ```
+### Model:find_all(ids)
+```lua
+local tweets = Tweets:find_all({1,2,3})
+```
+
+### Model:table_name() - Returns the name of the table backed by the model.
+```lua
+local tweet = Tweets:table_name()
+```
+
 ### Model:delete(id)
 ```lua
 local res = Tweets:delete(1)
 ```
 ```
 res will be true on success delete
+```
+
+### Pagination <br />
+We can create a paginator like so:
+```lua
+local query = {
+  match_all = {}
+}
+local paginated = Tweets:paginated(query)
+```
+#### Gets the total number of items that can be returned. 
+```lua
+paginated:total_items()
+```
+#### Returns the total number of pages.
+```lua
+paginated:num_pages()
+```
+#### Gets page_num, where pages are 1 indexed
+```lua
+paginated:get_page(2)
 ```
