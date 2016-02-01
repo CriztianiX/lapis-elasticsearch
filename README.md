@@ -13,6 +13,12 @@ local Tweets = Model:extend("tweet", {
 ```
 The first argument to extend is the name of the type to associate the model to. 
 ```
+### Model:create(values, create_opts = nil) - The create class method is used to create new docs. It takes a table of column values to create the docs with. It returns an instance of the model.
+```lua
+local tweet = Tweets:create({
+  name  = "Criztian Haunsen"
+}, { id = "my_id"})
+```
 
 ### Model:count(query) - Counts the number of records in the table that match the clause.
 ```lua
