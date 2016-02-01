@@ -42,6 +42,16 @@ local query = {
 }
 local tweet = Tweets:select(query)
 ```
+### Model:find_all(ids)
+```lua
+local tweets = Tweets:find_all({1,2,3})
+```
+
+### Model:table_name() - Returns the name of the table backed by the model.
+```lua
+local tweet = Tweets:table_name()
+```
+
 ### Model:delete(id)
 ```lua
 local res = Tweets:delete(1)
