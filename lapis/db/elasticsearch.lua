@@ -13,7 +13,7 @@ local client = elasticsearch.client({
     }
   },
   params = {
-    prefered_engine = function(method, uri, params, body, timeout)
+    preferred_engine = function(method, uri, params, body, timeout)
       local http = require("resty.http")
       local httpc = http.new()
       local args = {

@@ -14,7 +14,7 @@ client = elasticsearch.client {
     },
     params: {
         -- Should return a table with { status, statusCode, body }
-        prefered_engine: (method, uri, params, body, timeout) ->
+        preferred_engine: (method, uri, params, body, timeout) ->
             http = require "resty.http"
             httpc = http.new!
             args = { :method, :body, headers: { ["Content-Type"]: "application/json" } }
