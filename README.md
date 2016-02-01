@@ -14,6 +14,15 @@ local Tweets = Model:extend("tweet", {
 The first argument to extend is the name of the type to associate the model to. 
 ```
 
+### Model:count(query) - Counts the number of records in the table that match the clause.
+```lua
+local tweet = Tweets:count()
+```
+
+```lua
+local tweet = Tweets:find(1)
+```
+
 ### Model:find(id)
 ```lua
 local tweet = Tweets:find(1)
