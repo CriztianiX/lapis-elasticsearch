@@ -96,6 +96,21 @@ do
     end
     return res
   end
+  self.find_all = function(self, primary_keys)
+    local data, res = self.db.client:mget(self:get_params({
+      body = {
+        ids = primary_keys
+      }
+    }))
+    local docs = { }
+    if res == 200 and data.docs and next(data.docs) then
+      for _, doc in ipairs(data.docs) do
+        tinsert(docs, doc._source)
+      end
+      return self:load_all(docs)
+    end
+    return docs
+  end
   self.paginated = function(self, ...)
     return OffsetPaginator(self, ...)
   end

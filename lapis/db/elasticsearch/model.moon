@@ -21,6 +21,14 @@ class Model extends BaseModel
         if res == 200 and data.found == true
             return @load(data._source)
         return res
+    @find_all: (primary_keys) =>
+        data, res = @db.client\mget @get_params({ body: { ids: primary_keys }})
+        docs = {}
+        if res == 200  and data.docs and next(data.docs)
+            for _,doc in ipairs(data.docs)
+              tinsert(docs, doc._source)
+            return @load_all(docs)
+        return docs
     @paginated: (...) =>
         OffsetPaginator @, ...
     @select: (query, opts = {}) =>
