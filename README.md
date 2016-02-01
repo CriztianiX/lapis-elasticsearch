@@ -33,10 +33,6 @@ local query = {
   match_all = {}
 }
 local tweet = Tweets:select(query)
-local paginated = Tweets:paginated(query)
-paginated:total_items()
-paginated:num_pages()
-paginated:get_page(2)
 ```
 ### Model:delete(id)
 ```lua
@@ -44,4 +40,25 @@ local res = Tweets:delete(1)
 ```
 ```
 res will be true on success delete
+```
+
+### Pagination <br />
+We can create a paginator like so:
+```lua
+local query = {
+  match_all = {}
+}
+local paginated = Tweets:paginated(query)
+```
+#### Gets the total number of items that can be returned. 
+```lua
+paginated:total_items()
+```
+#### Returns the total number of pages.
+```lua
+paginated:num_pages()
+```
+#### Gets page_num, where pages are 1 indexed
+```lua
+paginated:get_page(2)
 ```
