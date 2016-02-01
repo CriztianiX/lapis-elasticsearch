@@ -78,6 +78,24 @@ do
     end
     return res
   end
+  self.create = function(self, values, create_opts)
+    if create_opts == nil then
+      create_opts = nil
+    end
+    if not create_opts or not create_opts.id then
+      error("Please, specify an id for your document, create_opts.id not found")
+    end
+    local id = create_opts.id
+    local doc = self:get_params({
+      id = id,
+      body = values
+    })
+    local data, res = self.db.client:index(doc)
+    if res == 200 or res == 201 then
+      return self:find(id)
+    end
+    return data
+  end
   self.delete = function(self, primary_key)
     local data, res = self.db.client:delete(self:get_params({
       id = primary_key

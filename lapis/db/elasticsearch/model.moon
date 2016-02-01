@@ -11,6 +11,15 @@ class Model extends BaseModel
         if res == 200
             return data.count
         return res
+    @create: (values, create_opts = nil) =>
+        if not create_opts or not create_opts.id
+            error("Please, specify an id for your document, create_opts.id not found")
+        id = create_opts.id
+        doc = @get_params({ :id, body: values })
+        data, res = @db.client\index(doc)
+        if res == 200 or res == 201
+            return @find(id)
+        return data
     @delete: (primary_key) =>
         data, res = @db.client\delete @get_params({ id: primary_key })
         if res == 200
