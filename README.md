@@ -22,6 +22,11 @@ local tweet = Tweets:find(1)
 The find class method fetches a single row from the table by id. 
 ```
 
+### Model:find_all(ids)
+```lua
+local tweets = Tweets:find_all({1,2,3})
+```
+
 ### Model:select(query, ...)
 ```lua
 local query = {
