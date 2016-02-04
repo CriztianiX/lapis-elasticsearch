@@ -1,6 +1,23 @@
 # lapis-elasticsearch - elasticsearch support for lapis
 
-### Models <br/>
+### Config <br />
+Add an elasticserrch key in your config like this:
+```lua
+config({ "development"}, {
+    elasticsearch = {
+        index = "twitter",
+        hosts = {
+            {
+                protocol = "http",
+                port = 9200,
+                host = "127.0.0.1"
+            }
+        }
+    }
+})
+```
+
+## Models <br/>
 Provides a Model base class for making Lua tables that can be synchronized with elasticsearch type. 
 #### The most primitive model is a blank model:
 
@@ -66,7 +83,15 @@ local res = Tweets:delete(1)
 res will be true on success delete
 ```
 
-### Pagination <br />
+## Instance Methods
+### obj:update(fields = {}) - Instances of models have the update method for updating the row. The values of the primary keys are used to uniquely identify the row for updating.
+```lua
+tweet:update({
+  author = "Peter"
+})
+```
+
+## Pagination <br />
 We can create a paginator like so:
 ```lua
 local query = {
