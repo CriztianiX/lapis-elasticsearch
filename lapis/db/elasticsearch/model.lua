@@ -8,15 +8,28 @@ do
   local _parent_0 = BaseModel
   local _base_0 = {
     update = function(self, first, ...)
-      return error("Not implemented yet")
+      if not first then
+        error("data for update is missing")
+      end
+      local primary = self:_primary_cond()
+      if not primary or not primary.id then
+        error("primary key id not found")
+      end
+      local params = self:get_params({
+        id = primary.id,
+        body = {
+          doc = first
+        }
+      })
+      return self.__class.db.client:update(params)
     end,
     get_params = function(self, args)
       if args == nil then
         args = { }
       end
       local params = {
-        index = self.config.elasticsearch.index,
-        type = self:table_name(),
+        index = self.__class.config.elasticsearch.index,
+        type = self.__class:table_name(),
         body = { }
       }
       for k, v in pairs(args) do
@@ -78,24 +91,6 @@ do
     end
     return res
   end
-  self.create = function(self, values, create_opts)
-    if create_opts == nil then
-      create_opts = nil
-    end
-    if not create_opts or not create_opts.id then
-      error("Please, specify an id for your document, create_opts.id not found")
-    end
-    local id = create_opts.id
-    local doc = self:get_params({
-      id = id,
-      body = values
-    })
-    local data, res = self.db.client:index(doc)
-    if res == 200 or res == 201 then
-      return self:find(id)
-    end
-    return data
-  end
   self.delete = function(self, primary_key)
     local data, res = self.db.client:delete(self:get_params({
       id = primary_key
@@ -110,24 +105,10 @@ do
       id = primary_key
     }))
     if res == 200 and data.found == true then
+      data._source.id = primary_key
       return self:load(data._source)
     end
     return res
-  end
-  self.find_all = function(self, primary_keys)
-    local data, res = self.db.client:mget(self:get_params({
-      body = {
-        ids = primary_keys
-      }
-    }))
-    local docs = { }
-    if res == 200 and data.docs and next(data.docs) then
-      for _, doc in ipairs(data.docs) do
-        tinsert(docs, doc._source)
-      end
-      return self:load_all(docs)
-    end
-    return docs
   end
   self.paginated = function(self, ...)
     return OffsetPaginator(self, ...)
