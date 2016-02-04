@@ -1,15 +1,27 @@
 config = require("lapis.config").get!
 elasticsearch = require "elasticsearch"
+tinsert = table.insert
 
 interpolate_query = (clause, ...)->
   return clause
 
+parse_hosts_config = (hosts) ->
+    servers = {}
+    for _, host in ipairs(hosts)
+        h = {
+            protocol: host.protocol or "http"
+            host: host.host or "127.0.0.1"
+            port: host.port or 9200
+        }
+        tinsert servers, h
+    servers
+
 client = elasticsearch.client {
-    hosts: {
+    hosts: config.elasticsearch.hosts and parse_hosts_config(config.elasticsearch.hosts) or {
         {
-            protocol: config.elasticsearch.protocol or "http"
-            host: config.elasticsearch.host or "127.0.0.1"
-            port: config.elasticsearch.port or 9200
+            protocol: "http"
+            host: "127.0.0.1"
+            port: 9200
         }
     },
     params: {
