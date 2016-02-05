@@ -35,7 +35,6 @@ class Model extends BaseModel
         for k,v in pairs(opts) 
             params[k] = v
 
-        query = @db.interpolate_query query, opts
         data, res = @db.client\search @get_params(params)
 
         if res == 200 

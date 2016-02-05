@@ -125,7 +125,6 @@ do
     for k, v in pairs(opts) do
       params[k] = v
     end
-    query = self.db.interpolate_query(query, opts)
     local data, res = self.db.client:search(self:get_params(params))
     if res == 200 then
       return self:load_all(self:parse_results(data))

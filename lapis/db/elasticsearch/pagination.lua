@@ -8,10 +8,16 @@ do
     per_page = 10,
     get_page = function(self, page)
       page = (math.max(1, tonumber(page) or 0)) - 1
-      return self:prepare_results(self:select(self._clause, {
+      local params = {
         size = self.per_page,
         from = self.per_page * page
-      }))
+      }
+      if next(self._opts) ~= nil then
+        for k, v in pairs(self._opts) do
+          params[k] = v
+        end
+      end
+      return self:prepare_results(self:select(self._clause, params))
     end,
     num_pages = function(self)
       return math.ceil(self:total_items() / self.per_page)
@@ -26,9 +32,12 @@ do
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
   local _class_0 = setmetatable({
-    __init = function(self, model, clause, ...)
+    __init = function(self, model, clause, opts)
       if clause == nil then
         clause = { }
+      end
+      if opts == nil then
+        opts = { }
       end
       self.model = model
       self.db = self.model.__class.db
@@ -36,7 +45,8 @@ do
       if opts then
         self.per_page = opts.per_page
       end
-      self._clause = self.db.interpolate_query(clause, ...)
+      self._clause = self.db.interpolate_query(clause)
+      self._opts = opts
     end,
     __base = _base_0,
     __name = "OffsetPaginator",

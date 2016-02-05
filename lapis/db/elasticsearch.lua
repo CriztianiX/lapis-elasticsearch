@@ -18,8 +18,6 @@ parse_hosts_config = function(hosts)
   end
   return servers
 end
-local p = require("moon.all").p
-p(config.elasticsearch.hosts)
 local client = elasticsearch.client({
   hosts = config.elasticsearch.hosts and parse_hosts_config(config.elasticsearch.hosts) or {
     {
