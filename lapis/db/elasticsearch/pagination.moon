@@ -10,7 +10,10 @@ class OffsetPaginator extends Paginator
         @_opts = opts
     get_page: (page) =>
         page = (math.max 1, tonumber(page) or 0) - 1
-        params = { size: @per_page, from: @per_page * page }
+        params = { 
+          size: @per_page
+          from: @per_page * page 
+        }
 
         if next(@_opts) != nil
             for k,v in pairs(@_opts) 

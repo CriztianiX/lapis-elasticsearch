@@ -25,17 +25,14 @@ class Model extends BaseModel
         return res
     @paginated: (...) =>
         OffsetPaginator @, ...
-    @select: (query, opts = {}) =>
+    @select: (query, opts={}) =>
         params = { 
             body: {
-                :query 
-            } 
+                :query
+            }
         }
 
-        for k,v in pairs(opts) 
-            params[k] = v
-
-        data, res = @db.client\search @get_params(params)
+        data, res = @db.client\search @get_params(params, opts)
 
         if res == 200 
           return @load_all @parse_results(data)
@@ -56,13 +53,19 @@ class Model extends BaseModel
     --
     -- Private methods
 
-    get_params: (args = {}) =>
+    get_params: (args={}, opts={}) =>
         --p = require("moon.all").p
         params = {
-            index: @@config.elasticsearch.index, type: @@table_name!, body: {}
+            index: @@config.elasticsearch.index
+            type: @@table_name!
+            body: {}
         }
+
         for k,v in pairs(args)
             params[k] = v
+        for k,v in pairs(opts)
+            params.body[k] = v
+        
         if next(params.body)
             params.body = params.body
         else

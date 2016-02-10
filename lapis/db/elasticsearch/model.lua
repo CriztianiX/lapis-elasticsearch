@@ -23,9 +23,12 @@ do
       })
       return self.__class.db.client:update(params)
     end,
-    get_params = function(self, args)
+    get_params = function(self, args, opts)
       if args == nil then
         args = { }
+      end
+      if opts == nil then
+        opts = { }
       end
       local params = {
         index = self.__class.config.elasticsearch.index,
@@ -34,6 +37,9 @@ do
       }
       for k, v in pairs(args) do
         params[k] = v
+      end
+      for k, v in pairs(opts) do
+        params.body[k] = v
       end
       if next(params.body) then
         params.body = params.body
@@ -122,10 +128,7 @@ do
         query = query
       }
     }
-    for k, v in pairs(opts) do
-      params[k] = v
-    end
-    local data, res = self.db.client:search(self:get_params(params))
+    local data, res = self.db.client:search(self:get_params(params, opts))
     if res == 200 then
       return self:load_all(self:parse_results(data))
     else
