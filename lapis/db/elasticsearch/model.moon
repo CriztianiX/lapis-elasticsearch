@@ -9,7 +9,7 @@ class Model extends BaseModel
     @count: (query) =>
         data, res = @db.client\count @get_params( { body: { :query } })
         if res == 200
-            return data.count
+            return tonumber(data.count)
         return res
     @delete: (primary_key) =>
         data, res = @db.client\delete @get_params({ id: primary_key })

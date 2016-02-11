@@ -93,7 +93,7 @@ do
       }
     }))
     if res == 200 then
-      return data.count
+      return tonumber(data.count)
     end
     return res
   end
