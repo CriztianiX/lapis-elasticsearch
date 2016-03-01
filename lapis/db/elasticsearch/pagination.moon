@@ -5,7 +5,7 @@ class OffsetPaginator extends Paginator
     new: (@model, clause={}, opts={}) =>
         @db = @model.__class.db
         @per_page = @model.per_page
-        @per_page = opts.per_page if opts
+        @per_page = opts.per_page if opts and opts.per_page
         @_clause = @db.interpolate_query clause
         @_opts = opts
     get_page: (page) =>
