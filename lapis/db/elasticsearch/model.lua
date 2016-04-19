@@ -41,9 +41,7 @@ do
       for k, v in pairs(opts) do
         params.body[k] = v
       end
-      if next(params.body) then
-        params.body = params.body
-      else
+      if not next(params.body) then
         params.body = nil
       end
       return params
@@ -119,6 +117,27 @@ do
   self.paginated = function(self, ...)
     return OffsetPaginator(self, ...)
   end
+  self.aggs = function(self, query, aggs)
+    local params = {
+      fields = "aggregations",
+      size = 1,
+      body = {
+        query = query,
+        aggs = aggs
+      }
+    }
+    local aggregations = self:query(params)
+    return aggregations.aggregations
+  end
+  self.query = function(self, params)
+    params = self:get_params(params)
+    local data, res = self.db.client:search(params)
+    if res == 200 then
+      return data
+    else
+      return error(res)
+    end
+  end
   self.select = function(self, query, opts)
     if opts == nil then
       opts = { }
@@ -132,7 +151,7 @@ do
     if res == 200 then
       return self:load_all(self:parse_results(data))
     else
-      return res
+      return error(res)
     end
   end
   if _parent_0.__inherited then

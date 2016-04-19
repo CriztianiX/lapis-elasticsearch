@@ -25,6 +25,21 @@ class Model extends BaseModel
         return res
     @paginated: (...) =>
         OffsetPaginator @, ...
+    @aggs: (query, aggs) =>
+        params = {
+            fields: "aggregations"
+            size: 1
+            body: { :query, :aggs }
+        }
+        aggregations = @query(params)
+        aggregations.aggregations
+    @query: (params) =>
+        params = @get_params(params)
+        data, res = @db.client\search params
+        if res == 200
+          return data
+        else
+          return error(res)
     @select: (query, opts={}) =>
         params = { 
             body: {
@@ -37,7 +52,7 @@ class Model extends BaseModel
         if res == 200 
           return @load_all @parse_results(data)
         else
-          return res
+          return error(res)
     --
     -- Object instance
     update: (first, ...) =>
@@ -66,10 +81,9 @@ class Model extends BaseModel
         for k,v in pairs(opts)
             params.body[k] = v
         
-        if next(params.body)
-            params.body = params.body
-        else
+        if not next(params.body)
             params.body = nil
+        
         --p(params)
         return params
     parse_results: (results) =>
