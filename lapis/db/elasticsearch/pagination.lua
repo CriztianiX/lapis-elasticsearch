@@ -42,7 +42,7 @@ do
       self.model = model
       self.db = self.model.__class.db
       self.per_page = self.model.per_page
-      if opts then
+      if opts and opts.per_page then
         self.per_page = opts.per_page
       end
       self._clause = self.db.interpolate_query(clause)
