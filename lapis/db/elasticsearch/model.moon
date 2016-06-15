@@ -6,6 +6,16 @@ class Model extends BaseModel
     @config = require("lapis.config").get!
     @db = require "lapis.db.elasticsearch"
     -- Class methods
+    @create: (values, create_opts = nil) =>
+        if not create_opts or not create_opts.id
+            error("Please, specify an id for your document,create_opts.id not found")
+        id = create_opts.id
+        parent = tostring(create_opts.parent) or nil
+        doc = @get_params :parent, :id, body: values
+        data, res = @db.client\index(doc)
+        if res == 200 or res == 201
+            return @find(id)
+        return data
     @count: (query) =>
         data, res = @db.client\count @get_params( { body: { :query } })
         if res == 200
@@ -53,6 +63,8 @@ class Model extends BaseModel
           return @load_all @parse_results(data)
         else
           return error(res)
+    @index_name: =>
+        @@config.elasticsearch.index
     --
     -- Object instance
     update: (first, ...) =>
@@ -69,22 +81,14 @@ class Model extends BaseModel
     -- Private methods
 
     get_params: (args={}, opts={}) =>
-        --p = require("moon.all").p
-        params = {
-            index: @@config.elasticsearch.index
-            type: @@table_name!
-            body: {}
-        }
-
+        index = @@index_name!
+        params = index: index, type: @@table_name!, body: {}
         for k,v in pairs(args)
             params[k] = v
         for k,v in pairs(opts)
             params.body[k] = v
-        
         if not next(params.body)
             params.body = nil
-        
-        --p(params)
         return params
     parse_results: (results) =>
       hits = {}

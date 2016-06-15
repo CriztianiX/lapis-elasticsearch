@@ -5,6 +5,7 @@ OffsetPaginator = require("lapis.db.elasticsearch.pagination").OffsetPaginator
 local tinsert = table.insert
 local Model
 do
+  local _class_0
   local _parent_0 = BaseModel
   local _base_0 = {
     update = function(self, first, ...)
@@ -30,8 +31,9 @@ do
       if opts == nil then
         opts = { }
       end
+      local index = self.__class:index_name()
       local params = {
-        index = self.__class.config.elasticsearch.index,
+        index = index,
         type = self.__class:table_name(),
         body = { }
       }
@@ -58,9 +60,9 @@ do
   }
   _base_0.__index = _base_0
   setmetatable(_base_0, _parent_0.__base)
-  local _class_0 = setmetatable({
+  _class_0 = setmetatable({
     __init = function(self, ...)
-      return _parent_0.__init(self, ...)
+      return _class_0.__parent.__init(self, ...)
     end,
     __base = _base_0,
     __name = "Model",
@@ -69,7 +71,10 @@ do
     __index = function(cls, name)
       local val = rawget(_base_0, name)
       if val == nil then
-        return _parent_0[name]
+        local parent = rawget(cls, "__parent")
+        if parent then
+          return parent[name]
+        end
       else
         return val
       end
@@ -84,6 +89,29 @@ do
   local self = _class_0
   self.config = require("lapis.config").get()
   self.db = require("lapis.db.elasticsearch")
+  self.create = function(self, values, create_opts)
+    if create_opts == nil then
+      create_opts = nil
+    end
+    if not create_opts or not create_opts.id then
+      error("Please, specify an id for your document,create_opts.id not found")
+    end
+    local id = create_opts.id
+    local parent = tostring(create_opts.parent) or nil
+    local doc = self:get_params({
+      parent = parent,
+      id = id,
+      body = values
+    })
+    local p = require("moon.all").p
+    local data, res = self.db.client:index(doc)
+    p(data)
+    p(res)
+    if res == 200 or res == 201 then
+      return self:find(id)
+    end
+    return data
+  end
   self.count = function(self, query)
     local data, res = self.db.client:count(self:get_params({
       body = {
@@ -153,6 +181,9 @@ do
     else
       return error(res)
     end
+  end
+  self.index_name = function(self)
+    return self.__class.config.elasticsearch.index
   end
   if _parent_0.__inherited then
     _parent_0.__inherited(_parent_0, _class_0)
