@@ -103,10 +103,7 @@ do
       id = id,
       body = values
     })
-    local p = require("moon.all").p
     local data, res = self.db.client:index(doc)
-    p(data)
-    p(res)
     if res == 200 or res == 201 then
       return self:find(id)
     end
