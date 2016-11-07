@@ -58,7 +58,6 @@ class Model extends BaseModel
         }
 
         data, res = @db.client\search @get_params(params, opts)
-
         if res == 200 
           return @load_all @parse_results(data)
         else
@@ -94,6 +93,9 @@ class Model extends BaseModel
       hits = {}
       if results.hits and results.hits.hits
         for _,hit in ipairs(results.hits.hits)
-          tinsert(hits, hit._source)
+          source = hit._source
+          if hit._score
+            source._score = hit._score
+          tinsert(hits, source)
       return hits
 { :Model }

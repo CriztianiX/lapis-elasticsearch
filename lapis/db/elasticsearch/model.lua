@@ -52,7 +52,11 @@ do
       local hits = { }
       if results.hits and results.hits.hits then
         for _, hit in ipairs(results.hits.hits) do
-          tinsert(hits, hit._source)
+          local source = hit._source
+          if hit._score then
+            source._score = hit._score
+          end
+          tinsert(hits, source)
         end
       end
       return hits
